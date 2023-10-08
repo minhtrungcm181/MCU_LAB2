@@ -117,10 +117,7 @@ hour = 15 , minute = 8 , second = 50;
 		  setTimer1(100);
 	  HAL_GPIO_TogglePin(dot_GPIO_Port, dot_Pin);
 	  }
-	  else if(timer2_flag == 1){
-	  			  setTimer2(50);
-	  			  update7SEG(index_led++);
-	  		  }
+
 	  if(index_led > 3) {index_led = 0;}
 	  else if(timer3_flag == 1) {
 		  setTimer3(100);
@@ -317,6 +314,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	timer1Run();
 	timer2Run();
+    if(timer2_flag == 1){
+		  setTimer2(50);
+		  update7SEG(index_led++);
+		  		  }
 	timer3Run();
 }
 /* USER CODE END 4 */
