@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include"software_timer.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -130,12 +131,43 @@ int main(void)
    HAL_GPIO_WritePin(dot_GPIO_Port, dot_Pin, SET);
 
 hour = 15 , minute = 8 , second = 50;
+setTimer1(5);
+setTimer2(5);
+setTimer3(5);
+setTimer4(5);
   while (1)
   {
 
-	    updateLEDMatrix (index_led_matrix++);
-	 if(index_led_matrix == 52) index_led_matrix = 0;
-	 	 HAL_Delay(10);
+	  if(timer1_flag == 1){
+	  	  setTimer1(100);
+	  	  HAL_GPIO_TogglePin(dot_GPIO_Port, dot_Pin);}
+
+	  if(timer2_flag == 1){
+	  	 setTimer2(50);
+	  	 update7SEG(index_led++);}
+	  if(index_led > 3) {index_led = 0;}
+
+	  if(timer3_flag == 1) {
+	  	setTimer3(100);
+	  	second ++;
+	  	if ( second >= 60){
+	  		  second = 0;
+	  		  minute ++;
+	  		  	  }
+	  	else if( minute >= 60){
+	  		 minute = 0;
+	  		 hour ++;
+	  		  	  }
+	  	else if( hour >=24){
+	  		 hour = 0;
+	  		  	  }
+	  		updateClockBuffer();
+	  	  }
+	  if(timer4_flag == 1) {
+		 updateLEDMatrix (index_led_matrix++);
+		 if(index_led_matrix == 52) index_led_matrix = 0;
+		 	 	 setTimer4(5);
+	  }
 
 
     /* USER CODE END WHILE */
@@ -286,43 +318,7 @@ void updateClockBuffer(){
 	led_buffer[3] = minute % 10;
 
 }
-int timer0_counter = 0;
-int timer0_flag = 0;
-int timer1_counter = 0;
-int check =0;
-int TIMER_CYCLE = 10;
 
-void setTimer1 ( int duration_7seg ){
-	timer1_counter = duration_7seg / TIMER_CYCLE ;
-	timer0_flag = 0;
-}
-
-void timer_run (){
-	if( timer1_counter > 0){
-		timer1_counter --;
-		if( timer1_counter == 0) {
-			timer0_flag = 1;
-			check++;
-		}
-	}
-}
-
-
-
-int timer2_flag;
-void setTimer2 ( int duration_matrix_led ){
-	timer0_counter = duration_matrix_led / TIMER_CYCLE ;
-	timer2_flag = 0;
-}
-
-void timer_run0 (){
-	if( timer0_counter > 0){
-		timer0_counter --;
-		if( timer0_counter == 0) {
-			timer2_flag = 1;
-		}
-	}
-}
  const int MAX_LED = 4;
  int index_led = 0;
  int led_buffer[4] = {1, 2, 3, 4};
@@ -629,9 +625,10 @@ void timer_run0 (){
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-//	timer1Run();
-//	timer2Run();
-//	timer3Run();
+	timer1Run();
+	timer2Run();
+	timer3Run();
+	timer4Run();
 }
 /* USER CODE END 4 */
 
